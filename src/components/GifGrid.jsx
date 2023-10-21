@@ -1,40 +1,36 @@
 import React from 'react'
 
-const getGifs = async(category) => {
+// import {GifItem} from './index'
+import GifItem from './GifItem.jsx';
+import { useFetchGisfs } from '../hooks/useFetchGisfs.js';
 
-    const url = `https://api.giphy.com/v1/gifs/search?api_key=lTUiHou4Qxbw51By4Sdekj3HQtTUgxNZ&limit=10&q=${category}`;
-    const resp = await fetch( url);
-    const {data = []} = await resp.json();
+
+const GifGrid = ({category}) => {    
     
-    
-    const gifs = data.map(inf => ({
-        id: inf.id,
-        url: inf.images.downsized_medium.url,
-        title: inf.title,
-        
 
-
-
-    }))
-    console.log(gifs)
-    return gifs;
-}
-
-
-const GifGrid = ({category}) => {
-    
-    getGifs(category);
+    const {imgs, isLoading} = useFetchGisfs(category);
 
     return (
-    <>
-        {           
-            <div>
+            <>
                 <h3>{category}</h3>
-                <p>{category}</p>
-            </div>         
-        }
-        
-    </>
+                {
+                    //if logico, si es true muestra el h2
+                    isLoading &&(<h2>Loading...</h2>)
+                }
+                <div className='card-grid'>
+                    {
+                        // usamos la desestruturacion para no tener que usar image.id o image.title
+                        //sacamos los valores que necesitamos
+                        // imgs.map(({id, title})=>(
+                        imgs.map(image=>(
+                            //enviamos solo lo que necesitamos
+                            // <GifItem key={image.id} title={image.title} url={image.url} />
+                            //otro metodo para enviar las prop de forma que en el componente que recibe, se usa solo lo que neceistamos\
+                            <GifItem key={image.id} {...image}/>
+                        ))    
+                    }   
+                </div>
+            </>
     )
 }
 
